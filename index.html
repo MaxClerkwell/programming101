@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Programming 101 with Max Clerkwell</title>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="dist/reset.css">
+    <link rel="stylesheet" href="dist/reveal.css">
+    <link rel="stylesheet" href="dist/theme/black.css">
+    <link rel="stylesheet" href="plugin/highlight/monokai.css">
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides" id="slides"></div>
+    </div>
+
+    <!-- Core JS -->
+    <script src="dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+
+    <script>
+        const slidesContainer = document.getElementById('slides');
+
+        console.log("Initializing script...");
+
+        // Sprachparameter auslesen
+        const urlParams = new URLSearchParams(window.location.search);
+        const selectedChapters = urlParams.get('chapters')?.split(',') || null;
+        const language = urlParams.get('language') || 'en'; // Standard: Englisch
+
+        // Kapitel laden
+        function loadChapters() {
+            return fetch('chapters/chapters.json')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Error loading chapters.json: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(chapters => {
+                    console.log("Chapters loaded:", chapters);
+
+                    // Wenn ?chapters= angegeben ist, filtern
+                    const filteredChapters = selectedChapters 
+                        ? chapters.filter(chapter => selectedChapters.some(sel => chapter.includes(sel)))
+                        : chapters;
+
+                    console.log("Filtered chapters:", filteredChapters);
+
+                    const promises = filteredChapters.map(filePath => {
+                        console.log(`Loading chapter: ${filePath}`);
+                        return fetch(filePath)
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error(`Error loading chapter ${filePath}: ${response.status}`);
+                                }
+                                return response.text()
+                                    .then(html => ({ html, chapter: filePath }));
+                            });
+                    });
+
+                    // Kapitel laden und in den DOM einfügen
+                    return Promise.all(promises).then(contents => {
+                        contents.forEach(({ html, chapter }) => {
+                            const chapterSection = document.createElement('section');
+                            chapterSection.innerHTML = html;
+                            chapterSection.setAttribute('data-chapter', chapter);
+                            slidesContainer.appendChild(chapterSection);
+                        });
+                        console.log("All chapters added to the DOM.");
+                    });
+                });
+        }
+
+        // Übersetzungen für Kapitel laden
+        function loadChapterTranslations(chapter, language) {
+            const baseName = chapter.replace(/\.html$/, '');
+            const translationFile = `${baseName}.${language}.json`;
+
+            return fetch(translationFile)
+                .then(response => {
+                    if (!response.ok) {
+                        console.warn(`No translation file found for ${chapter} in ${language}. Using defaults.`);
+                        return {};
+                    }
+                    return response.json();
+                });
+        }
+
+        // Übersetzungen anwenden
+        function applyTranslations(chapter, translations) {
+            const section = document.querySelector(`[data-chapter='${chapter}']`);
+            if (!section) return;
+
+            section.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[key]) {
+                    el.innerHTML = translations[key];
+                }
+            });
+        }
+
+        // Initialisierung
+        loadChapters()
+            .then(() => {
+                const chapters = document.querySelectorAll('[data-chapter]');
+
+                const translationPromises = Array.from(chapters).map(chapterEl => {
+                    const chapter = chapterEl.getAttribute('data-chapter');
+                    return loadChapterTranslations(chapter, language).then(translations => {
+                        applyTranslations(chapter, translations);
+                    });
+                });
+
+                return Promise.all(translationPromises);
+            })
+            .then(() => {
+                // Reveal.js initialisieren
+                console.log("Initializing Reveal.js...");
+                Reveal.initialize({
+                    hash: true,
+                    plugins: [RevealMarkdown, RevealHighlight, RevealNotes],
+                });
+                console.log("Reveal.js initialized.");
+            })
+            .catch(error => {
+                console.error("Error during script execution:", error);
+            });
+    </script>
+</body>
+</html>

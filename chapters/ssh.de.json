@@ -1,0 +1,8 @@
+{
+    "ssh.title": "Was ist SSH?",
+    "ssh.description": "SSH (Secure Shell) ist ein Protokoll für sichere Fernanmeldung.",
+    "ssh.how_to_use": "Wie man SSH verwendet",
+    "ssh.command": "Verwenden Sie den <code>ssh</code>-Befehl gefolgt von Benutzername und Host.",
+    "ssh.key_auth": "SSH-Schlüssel-Authentifizierung",
+    "ssh.key_create": "Erstellen Sie ein Schlüsselpaar mit <code>ssh-keygen</code> und kopieren Sie den öffentlichen Schlüssel."
+}

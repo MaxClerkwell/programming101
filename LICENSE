@@ -1,0 +1,32 @@
+MIT-like License for Non-Commercial Use
+
+Copyright (c) [2025] [Stephan "MaxClerkwell" Bökelmann]
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this presentation and associated materials (the "Presentation"), to use the Presentation for private and non-commercial purposes, subject to the following conditions:
+
+1. **Non-Commercial Use Only**: 
+   The Presentation, in its original or modified form, may not be used for any commercial purposes, including but not limited to selling, licensing, or distributing it for monetary gain, without explicit prior written permission from the copyright holder.
+
+2. **Third-Party Materials**:
+   The Presentation may contain images, text, or other materials that are not the property of the copyright holder. These materials are used under applicable licenses or fair use policies. The copyright holder does not claim ownership of such materials.
+
+3. **Warranty Disclaimer**:
+   The Presentation is provided "as is", without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose, or non-infringement. In no event shall the copyright holder be liable for any claim, damages, or other liability.
+
+4. **Notification of Infringement**:
+   If you believe that your intellectual property rights have been violated in this repository, please contact the copyright holder immediately at `sboekelmann@ep1.rub.de`.
+
+5. **Inclusion of Reveal.js**:
+   This repository includes Reveal.js, which is licensed under the MIT License. The license for Reveal.js is included below.
+
+---
+
+**Reveal.js License (MIT)**
+
+Copyright (c) 2012-2024 Hakim El Hattab
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

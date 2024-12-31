@@ -1,0 +1,8 @@
+{
+    "ssh.title": "What is SSH?",
+    "ssh.description": "SSH (Secure Shell) is a protocol for secure remote login.",
+    "ssh.how_to_use": "How to Use SSH",
+    "ssh.command": "Use the <code>ssh</code> command followed by the username and host.",
+    "ssh.key_auth": "SSH Key Authentication",
+    "ssh.key_create": "Create a key pair using <code>ssh-keygen</code> and copy the public key."
+}
