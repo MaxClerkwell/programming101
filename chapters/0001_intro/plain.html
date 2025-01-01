@@ -7,9 +7,158 @@
     <h2 data-i18n="plain.what_is_this_title">The meaning of this slide-deck</h2>
 </section>
 
+
+
+
+<section>
+    <h2>Responsives YouTube Video</h2>
+    <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+        <iframe 
+            src="https://www.youtube.com/embed/wCL-0NgVf3I" title="Stephan Bökelmann - Roast for Clarify - emBO++ 2024" 
+            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+            referrerpolicy="strict-origin-when-cross-origin"
+            frameborder="0" 
+            allowfullscreen>
+        </iframe>
+    </div>
+</section>
+
+
+<section data-transition="convex">
+    <blockquote>
+        <p>"Ein großartiges Zitat kann eine Präsentation beleben."</p>
+        <footer>– Max Clerkwell</footer>
+    </blockquote>
+</section>
+
+<section>
+    <h2>Schrittweise Anzeige</h2>
+    <p class="fragment">Erster Punkt</p>
+    <p class="fragment">Zweiter Punkt</p>
+    <p class="fragment">Dritter Punkt</p>
+</section>
+
+
+<section>
+    <h2>Interaktive Elemente</h2>
+    <button onclick="alert('Button geklickt!')">Klick mich</button>
+</section>
+
+<section>
+    <h2>Flussdiagramm</h2>
+    <div class="mermaid">
+        graph TD;
+        A[Start] --> B{Entscheidung};
+        B -->|Ja| C[Weiter];
+        B -->|Nein| D[Ende];
+    </div>
+</section>
+
+<section>
+    <h2>Tabellenlayout</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Spalte 1</th>
+                <th>Spalte 2</th>
+                <th>Spalte 3</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Wert 1</td>
+                <td>Wert 2</td>
+                <td>Wert 3</td>
+            </tr>
+            <tr>
+                <td>Wert 4</td>
+                <td>Wert 5</td>
+                <td>Wert 6</td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+<section>
+    <h2>Timeline</h2>
+    <div>
+        <div style="margin-bottom: 20px;">
+            <strong>2021</strong> - Start des Projekts
+        </div>
+        <div style="margin-bottom: 20px;">
+            <strong>2022</strong> - Meilenstein erreicht
+        </div>
+        <div>
+            <strong>2023</strong> - Projektabschluss
+        </div>
+    </div>
+</section>
+
+<section>
+    <h2>Kartenlayout</h2>
+    <div style="display: flex; gap: 20px;">
+        <div style="background: #fff; padding: 20px; border: 1px solid #ddd; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+            <h3>Karte 1</h3>
+            <p>Kurzer Text</p>
+        </div>
+        <div style="background: #fff; padding: 20px; border: 1px solid #ddd; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+            <h3>Karte 2</h3>
+            <p>Kurzer Text</p>
+        </div>
+    </div>
+</section>
+
+<section>
+    <h2>Grid-Layout</h2>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+        <div style="background: #f0f0f0; padding: 20px;">Item 1</div>
+        <div style="background: #f0f0f0; padding: 20px;">Item 2</div>
+        <div style="background: #f0f0f0; padding: 20px;">Item 3</div>
+        <div style="background: #f0f0f0; padding: 20px;">Item 4</div>
+        <div style="background: #f0f0f0; padding: 20px;">Item 5</div>
+        <div style="background: #f0f0f0; padding: 20px;">Item 6</div>
+    </div>
+</section>
+
+<section>
+    <h2>Informationen in Spalten</h2>
+    <div style="display: flex; justify-content: space-between;">
+        <div style="flex: 1; margin-right: 20px;">
+            <h3>Spalte 1</h3>
+            <p>Inhalt für die erste Spalte.</p>
+        </div>
+        <div style="flex: 1;">
+            <h3>Spalte 2</h3>
+            <p>Inhalt für die zweite Spalte.</p>
+        </div>
+    </div>
+</section>
+
+
 <section>
     <h2 data-i18n="plain.how_to_use_title">How to use this slide-deck</h2>
-
+    <p>This slide-deck comes with three major features that I use to my convenience:</p>
+    <ul>
+        <li class="fragment fade-in" data-fragment-index="1">Internationalization</li>
+        <ul>
+            <li class="fragment fade-in" data-fragment-index="1" style="font-size: 0.6em;">
+                i18n is used and the language can be set by the URL parameter <code>language</code> to <code>en</code> or <code>de</code>
+            </li>
+        </ul>
+        <li class="fragment fade-in" data-fragment-index="2">Themes</li>
+        <ul>
+            <li class="fragment fade-in" data-fragment-index="2" style="font-size: 0.6em;">
+                Since I use this presentation for my lectures at different universities, I use the <code>theme</code> parameter to customize the layout and certain chapters for HSBO, THGA and RUB
+            </li>
+        </ul>
+        <li class="fragment fade-in" data-fragment-index="3">Dynamic Chapter Selection</li>
+        <ul>
+            <li class="fragment fade-in" data-fragment-index="3" style="font-size: 0.6em;">
+                The <code>chapter</code> parameter can be used to select certain chapters dynamically. This makes it easier to include sub-parts of the content as iFrames in moodle and other platforms
+            </li>
+        </ul>
+    </ul>
 </section>
 
 <section>
