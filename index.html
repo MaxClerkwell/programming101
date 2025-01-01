@@ -21,183 +21,134 @@
     <script src="libs/reveal/plugin/notes/notes.js"></script>
     <script src="libs/reveal/plugin/markdown/markdown.js"></script>
     <script src="libs/reveal/plugin/highlight/highlight.js"></script>
-
-    <!-- Chart JS -->
     <script src="libs/chart/chart.umd.js"></script>
 
+    <!-- Load additional HTML content, depending on chosen chapters -->
     <script>
         const slidesContainer = document.getElementById('slides');
 
         console.log("Initializing script...");
 
-        // Sprachparameter auslesen
         const urlParams = new URLSearchParams(window.location.search);
         const selectedChapters = urlParams.get('chapters')?.split(',') || null;
-        const language = urlParams.get('language') || 'en'; // Standard: Englisch
-        const theme = urlParams.get('theme') || 'black'; // Standard-Theme: black
+        const language = urlParams.get('language') || 'en';
+        const theme = urlParams.get('theme') || 'black';
 
-        // Theme setzen
         const themeLink = document.getElementById('theme-link');
 
-        // Dynamisch verfügbare Themes laden
-        function fetchAvailableThemes() {
-            return fetch('libs/reveal/theme/')
+        // Dynamically set theme
+        function setTheme() {
+            const themePath = `libs/reveal/theme/${theme}.css`;
+            fetch(themePath, { method: 'HEAD' })
                 .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Unable to load themes.');
+                    if (response.ok) {
+                        themeLink.href = themePath;
+                    } else {
+                        console.warn(`Theme '${theme}' not found. Falling back to 'black'.`);
+                        themeLink.href = `libs/reveal/theme/black.css`;
                     }
-                    return response.text();
                 })
-                .then(html => {
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-                    return Array.from(doc.querySelectorAll('a')).map(link => link.textContent.replace('.css', '').trim());
-                });
-        }
-
-        fetchAvailableThemes()
-            .then(availableThemes => {
-                if (availableThemes.includes(theme)) {
-                    themeLink.href = `libs/reveal/theme/${theme}.css`;
-                } else {
-                    console.warn(`Theme '${theme}' not found. Falling back to 'black'.`);
+                .catch(error => {
+                    console.error('Error setting theme:', error);
                     themeLink.href = `libs/reveal/theme/black.css`;
+                });
+        }
+
+        // Dynamically load chapters
+        async function loadChapters() {
+            const response = await fetch('chapters/');
+            if (!response.ok) {
+                throw new Error(`Error accessing chapters directory: ${response.status}`);
+            }
+
+            const text = await response.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(text, 'text/html');
+            const directories = Array.from(doc.querySelectorAll('a[href]'))
+                .map(link => link.getAttribute('href').replace(/\/$/, ''))
+                .filter(name => name !== '..');
+
+            const chaptersToLoad = selectedChapters && selectedChapters.length > 0 ? selectedChapters : directories;
+
+            const loadPromises = chaptersToLoad.map(async chapter => {
+                const basePath = `chapters/${chapter}/`;
+
+                let chapterFile = `${basePath}${theme}.html`;
+                const response = await fetch(chapterFile, { method: 'HEAD' });
+
+                if (!response.ok) {
+                    chapterFile = `${basePath}plain.html`;
                 }
-            })
-            .catch(error => {
-                console.error('Error loading themes:', error);
-                themeLink.href = `libs/reveal/theme/black.css`;
+
+                const chapterResponse = await fetch(chapterFile);
+                if (!chapterResponse.ok) {
+                    console.warn(`Skipping chapter: ${chapter}`);
+                    return null;
+                }
+
+                const html = await chapterResponse.text();
+                const chapterSection = document.createElement('section');
+                chapterSection.innerHTML = html;
+                chapterSection.setAttribute('data-chapter', chapter);
+                slidesContainer.appendChild(chapterSection);
+                return chapter;
             });
 
-        // Kapitel laden
-        function loadChapters() {
-            return fetch('chapters/chapters.json')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`Error loading chapters.json: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(chapters => {
-                    console.log("Chapters loaded:", chapters);
+            const loadedChapters = await Promise.all(loadPromises);
+            return loadedChapters.filter(Boolean);
+        }
 
-                    // Wenn ?chapters= angegeben ist, filtern
-                    const filteredChapters = selectedChapters 
-                        ? chapters.filter(chapter => selectedChapters.some(sel => chapter.includes(sel)))
-                        : chapters;
+        // Load additional scripts for chapters
+        async function loadAdditionalScripts(loadedChapters) {
+            const scriptPromises = loadedChapters.map(async chapter => {
+                const scriptFile = `chapters/${chapter}/scripts.html`;
+                const response = await fetch(scriptFile);
 
-                    console.log("Filtered chapters:", filteredChapters);
+                if (response.ok) {
+                    const html = await response.text();
+                    const container = document.getElementById('additional-scripting-content');
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = html;
 
-                    const promises = filteredChapters.map(filePath => {
-                        let adjustedPath = filePath;
-
-                        // Wenn es ein intro Kapitel ist, das Theme verwenden
-                        if (filePath.startsWith('chapters/intro/') && ['hsbo', 'thga', 'rub', 'nabla'].includes(theme)) {
-                            adjustedPath = filePath.replace('plain.html', `${theme}.html`);
+                    tempDiv.querySelectorAll('script').forEach(script => {
+                        const newScript = document.createElement('script');
+                        if (script.src) {
+                            newScript.src = script.src;
+                        } else {
+                            newScript.textContent = script.textContent;
                         }
-
-                        console.log(`Loading chapter: ${adjustedPath}`);
-                        return fetch(adjustedPath)
-                            .then(response => {
-                                if (!response.ok) {
-                                    throw new Error(`Error loading chapter ${adjustedPath}: ${response.status}`);
-                                }
-                                return response.text()
-                                    .then(html => ({ html, chapter: adjustedPath }));
-                            });
+                        document.body.appendChild(newScript);
                     });
-
-                    // Kapitel laden und in den DOM einfügen
-                    return Promise.all(promises).then(contents => {
-                        contents.forEach(({ html, chapter }) => {
-                            const chapterSection = document.createElement('section');
-                            chapterSection.innerHTML = html;
-                            chapterSection.setAttribute('data-chapter', chapter);
-                            slidesContainer.appendChild(chapterSection);
-                        });
-                        console.log("All chapters added to the DOM.");
-                    });
-                });
-        }
-
-        // Übersetzungen für Kapitel laden
-        function loadChapterTranslations(chapter, language) {
-            const baseName = chapter.replace(/\.html$/, '');
-            const translationFile = `${baseName}.${language}.json`;
-
-            return fetch(translationFile)
-                .then(response => {
-                    if (!response.ok) {
-                        console.warn(`No translation file found for ${chapter} in ${language}. Using defaults.`);
-                        return {};
-                    }
-                    return response.json();
-                });
-        }
-
-        // Übersetzungen anwenden
-        function applyTranslations(chapter, translations) {
-            const section = document.querySelector(`[data-chapter='${chapter}']`);
-            if (!section) return;
-
-            section.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                if (translations[key]) {
-                    el.innerHTML = translations[key];
+                } else {
+                    console.warn(`No additional scripts for chapter: ${chapter}`);
                 }
             });
+
+            await Promise.all(scriptPromises);
         }
 
-        // Initialisierung
-        loadChapters()
-            .then(() => {
-                const chapters = document.querySelectorAll('[data-chapter]');
+        // Initialization
+        (async () => {
+            try {
+                setTheme();
 
-                const translationPromises = Array.from(chapters).map(chapterEl => {
-                    const chapter = chapterEl.getAttribute('data-chapter');
-                    return loadChapterTranslations(chapter, language).then(translations => {
-                        applyTranslations(chapter, translations);
-                    });
-                });
+                const loadedChapters = await loadChapters();
+                console.log("Loaded chapters:", loadedChapters);
 
-                return Promise.all(translationPromises);
-            })
-            .then(() => {
-                // Reveal.js initialisieren
+                await loadAdditionalScripts(loadedChapters);
+
                 console.log("Initializing Reveal.js...");
                 Reveal.initialize({
                     hash: true,
                     plugins: [RevealMarkdown, RevealHighlight, RevealNotes],
                 });
                 console.log("Reveal.js initialized.");
-            })
-            .catch(error => {
-                console.error("Error during script execution:", error);
-            });
+            } catch (error) {
+                console.error('Error during initialization:', error);
+            }
+        })();
     </script>
 
-
-<script>
-        Reveal.addEventListener('slidechanged', () => {
-            const ctx = document.getElementById('chartExample').getContext('2d');
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Rot', 'Blau', 'Grün'],
-                    datasets: [{
-                        label: 'Farben',
-                        data: [10, 20, 30],
-                        backgroundColor: ['red', 'blue', 'green']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: { display: true }
-                    }
-                }
-            });
-        });
-    </script>
+    <div id="additional-scripting-content"></div>
 </body>
 </html>
