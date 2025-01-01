@@ -6,10 +6,10 @@
     <title>Programming 101 with Max Clerkwell</title>
 
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="dist/reset.css">
-    <link rel="stylesheet" href="dist/reveal.css">
-    <link id="theme-link" rel="stylesheet" href="dist/theme/black.css">
-    <link rel="stylesheet" href="plugin/highlight/monokai.css">
+    <link rel="stylesheet" href="libs/reveal/reset.css">
+    <link rel="stylesheet" href="libs/reveal/reveal.css">
+    <link id="theme-link" rel="stylesheet" href="libs/reveal/theme/black.css">
+    <link rel="stylesheet" href="libs/reveal/plugin/highlight/monokai.css">
 </head>
 <body>
     <div class="reveal">
@@ -17,11 +17,10 @@
     </div>
 
     <!-- Core JS -->
-    <script src="dist/reveal.js"></script>
-    <script src="plugin/notes/notes.js"></script>
-    <script src="plugin/markdown/markdown.js"></script>
-    <script src="plugin/highlight/highlight.js"></script>
-
+    <script src="libs/reveal/reveal.js"></script>
+    <script src="libs/reveal/plugin/notes/notes.js"></script>
+    <script src="libs/reveal/plugin/markdown/markdown.js"></script>
+    <script src="libs/reveal/plugin/highlight/highlight.js"></script>
 
     <script>
         const slidesContainer = document.getElementById('slides');
@@ -39,7 +38,7 @@
 
         // Dynamisch verfügbare Themes laden
         function fetchAvailableThemes() {
-            return fetch('dist/theme/')
+            return fetch('libs/reveal/theme/')
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Unable to load themes.');
@@ -56,15 +55,15 @@
         fetchAvailableThemes()
             .then(availableThemes => {
                 if (availableThemes.includes(theme)) {
-                    themeLink.href = `dist/theme/${theme}.css`;
+                    themeLink.href = `libs/reveal/theme/${theme}.css`;
                 } else {
                     console.warn(`Theme '${theme}' not found. Falling back to 'black'.`);
-                    themeLink.href = `dist/theme/black.css`;
+                    themeLink.href = `libs/reveal/theme/black.css`;
                 }
             })
             .catch(error => {
                 console.error('Error loading themes:', error);
-                themeLink.href = `dist/theme/black.css`;
+                themeLink.href = `libs/reveal/theme/black.css`;
             });
 
         // Kapitel laden

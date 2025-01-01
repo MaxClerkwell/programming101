@@ -1,0 +1,17 @@
+{
+  "name": "presentation",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "copy-reveal": "npm_config_shell=/bin/bash mkdir -p libs/reveal && cp -r node_modules/reveal.js/dist/* libs/reveal/ && cp -r node_modules/reveal.js/plugin libs/reveal/",
+    "postinstall": "npm run copy-reveal"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "reveal.js": "^5.1.0"
+  }
+}
