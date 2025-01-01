@@ -8,7 +8,7 @@
     <!-- Stylesheets -->
     <link rel="stylesheet" href="dist/reset.css">
     <link rel="stylesheet" href="dist/reveal.css">
-    <link rel="stylesheet" href="dist/theme/black.css">
+    <link id="theme-link" rel="stylesheet" href="dist/theme/black.css">
     <link rel="stylesheet" href="plugin/highlight/monokai.css">
 </head>
 <body>
@@ -22,6 +22,7 @@
     <script src="plugin/markdown/markdown.js"></script>
     <script src="plugin/highlight/highlight.js"></script>
 
+
     <script>
         const slidesContainer = document.getElementById('slides');
 
@@ -31,6 +32,40 @@
         const urlParams = new URLSearchParams(window.location.search);
         const selectedChapters = urlParams.get('chapters')?.split(',') || null;
         const language = urlParams.get('language') || 'en'; // Standard: Englisch
+        const theme = urlParams.get('theme') || 'black'; // Standard-Theme: black
+
+        // Theme setzen
+        const themeLink = document.getElementById('theme-link');
+
+        // Dynamisch verfügbare Themes laden
+        function fetchAvailableThemes() {
+            return fetch('dist/theme/')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Unable to load themes.');
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    return Array.from(doc.querySelectorAll('a')).map(link => link.textContent.replace('.css', '').trim());
+                });
+        }
+
+        fetchAvailableThemes()
+            .then(availableThemes => {
+                if (availableThemes.includes(theme)) {
+                    themeLink.href = `dist/theme/${theme}.css`;
+                } else {
+                    console.warn(`Theme '${theme}' not found. Falling back to 'black'.`);
+                    themeLink.href = `dist/theme/black.css`;
+                }
+            })
+            .catch(error => {
+                console.error('Error loading themes:', error);
+                themeLink.href = `dist/theme/black.css`;
+            });
 
         // Kapitel laden
         function loadChapters() {
@@ -52,14 +87,21 @@
                     console.log("Filtered chapters:", filteredChapters);
 
                     const promises = filteredChapters.map(filePath => {
-                        console.log(`Loading chapter: ${filePath}`);
-                        return fetch(filePath)
+                        let adjustedPath = filePath;
+
+                        // Wenn es ein intro Kapitel ist, das Theme verwenden
+                        if (filePath.startsWith('chapters/intro/') && ['hsbo', 'thga', 'rub', 'nabla'].includes(theme)) {
+                            adjustedPath = filePath.replace('plain.html', `${theme}.html`);
+                        }
+
+                        console.log(`Loading chapter: ${adjustedPath}`);
+                        return fetch(adjustedPath)
                             .then(response => {
                                 if (!response.ok) {
-                                    throw new Error(`Error loading chapter ${filePath}: ${response.status}`);
+                                    throw new Error(`Error loading chapter ${adjustedPath}: ${response.status}`);
                                 }
                                 return response.text()
-                                    .then(html => ({ html, chapter: filePath }));
+                                    .then(html => ({ html, chapter: adjustedPath }));
                             });
                     });
 
