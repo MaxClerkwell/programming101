@@ -12,6 +12,16 @@
 
 </section>
 
+<section>
+    <h2>Chart.js: Beispiel</h2>
+    <canvas id="chartExample" width="300" height="150"></canvas>
+
+    
+</section>
+
+
+
+
 
 <section>
     <h2 data-i18n="plain.how_to_reach">How to Reach me</h2>
@@ -34,3 +44,28 @@
         </li>
     </ul>
 </section>
+
+
+
+<script>
+    Reveal.addEventListener('slidechanged', () => {
+        const ctx = document.getElementById('chartExample').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Rot', 'Blau', 'Grün'],
+                datasets: [{
+                    label: 'Farben',
+                    data: [10, 20, 30],
+                    backgroundColor: ['red', 'blue', 'green']
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: true }
+                }
+            }
+        });
+    });
+</script>

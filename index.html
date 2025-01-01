@@ -22,6 +22,9 @@
     <script src="libs/reveal/plugin/markdown/markdown.js"></script>
     <script src="libs/reveal/plugin/highlight/highlight.js"></script>
 
+    <!-- Chart JS -->
+    <script src="libs/chart/chart.umd.js"></script>
+
     <script>
         const slidesContainer = document.getElementById('slides');
 
@@ -171,6 +174,30 @@
             .catch(error => {
                 console.error("Error during script execution:", error);
             });
+    </script>
+
+
+<script>
+        Reveal.addEventListener('slidechanged', () => {
+            const ctx = document.getElementById('chartExample').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Rot', 'Blau', 'Grün'],
+                    datasets: [{
+                        label: 'Farben',
+                        data: [10, 20, 30],
+                        backgroundColor: ['red', 'blue', 'green']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: true }
+                    }
+                }
+            });
+        });
     </script>
 </body>
 </html>
