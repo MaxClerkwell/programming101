@@ -1,0 +1,44 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Logs
+logs
+*.log
+logs/*
+
+# OS-spezifische Dateien
+.DS_Store
+Thumbs.db
+
+# Editor-spezifische Dateien
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# MacOS Finder Dateien
+._*
+
+# Temporary system files
+*.tmp
+*.bak
+*.old
+
+# Build-Ordner
+dist/
+build/
+.cache/
+
+# Paket-Manager Lockfiles (optional, je nach Team-Workflow)
+# Wenn du willst, dass andere deine exakte npm-Umgebung nachstellen, lass diese Dateien im Repo.
+# Wenn du es flexibel halten möchtest, kannst du sie ignorieren.
+package-lock.json
+yarn.lock
+
+# Sonstige temporäre Dateien
+*.gz
+*.zip
+*.tar
