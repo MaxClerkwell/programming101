@@ -10,11 +10,39 @@
     <link rel="stylesheet" href="libs/reveal/reveal.css">
     <link id="theme-link" rel="stylesheet" href="libs/reveal/theme/black.css">
     <link rel="stylesheet" href="libs/reveal/plugin/highlight/monokai.css">
+    <style>
+        #fixed-github-link {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            font-size: 0.9em;
+            color: #007acc;
+            text-decoration: none;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 5px 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            display: block; /* Initially shown */
+        }
+
+        #fixed-github-link:hover {
+            background: rgba(0, 122, 204, 0.9);
+            color: white;
+        }
+    </style>
 </head>
 <body>
     <div class="reveal">
         <div class="slides" id="slides"></div>
     </div>
+
+    <!-- GitHub-Link -->
+    <a href="https://github.com/MaxClerkwell/programming101" 
+       id="fixed-github-link" 
+       target="_blank">
+        Imprint
+    </a>
 
     <!-- Core JS -->
     <script src="libs/reveal/reveal.js"></script>
@@ -127,6 +155,18 @@
             await Promise.all(scriptPromises);
         }
 
+        // Add link visibility based on active slide
+        function toggleGithubLink() {
+            const githubLink = document.getElementById('fixed-github-link');
+            const currentSlide = Reveal.getCurrentSlide();
+
+            if (currentSlide && currentSlide.classList.contains('chapter-head')) {
+                githubLink.style.display = 'block'; // Show link
+            } else {
+                githubLink.style.display = 'none'; // Hide link
+            }
+        }
+
         // Initialization
         (async () => {
             try {
@@ -143,6 +183,9 @@
                     plugins: [RevealMarkdown, RevealHighlight, RevealNotes],
                 });
                 console.log("Reveal.js initialized.");
+
+                // Add event listener for slide change
+                Reveal.on('slidechanged', toggleGithubLink);
             } catch (error) {
                 console.error('Error during initialization:', error);
             }
