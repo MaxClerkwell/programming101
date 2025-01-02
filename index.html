@@ -84,47 +84,44 @@
 
         // Dynamically load chapters
         async function loadChapters() {
-            const response = await fetch('chapters/');
-            if (!response.ok) {
-                throw new Error(`Error accessing chapters directory: ${response.status}`);
-            }
+    const response = await fetch('chapters.json'); // Lade die JSON-Datei
+    if (!response.ok) {
+        throw new Error(`Error accessing chapters.json: ${response.status}`);
+    }
 
-            const text = await response.text();
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(text, 'text/html');
-            const directories = Array.from(doc.querySelectorAll('a[href]'))
-                .map(link => link.getAttribute('href').replace(/\/$/, ''))
-                .filter(name => name !== '..');
+    const directories = await response.json(); // Liste der Kapitel aus JSON
+    const chaptersToLoad = selectedChapters && selectedChapters.length > 0
+        ? selectedChapters
+        : directories;
 
-            const chaptersToLoad = selectedChapters && selectedChapters.length > 0 ? selectedChapters : directories;
+    const loadPromises = chaptersToLoad.map(async chapter => {
+        const basePath = `chapters/${chapter}/`;
 
-            const loadPromises = chaptersToLoad.map(async chapter => {
-                const basePath = `chapters/${chapter}/`;
+        let chapterFile = `${basePath}${theme}.html`;
+        const response = await fetch(chapterFile, { method: 'HEAD' });
 
-                let chapterFile = `${basePath}${theme}.html`;
-                const response = await fetch(chapterFile, { method: 'HEAD' });
-
-                if (!response.ok) {
-                    chapterFile = `${basePath}plain.html`;
-                }
-
-                const chapterResponse = await fetch(chapterFile);
-                if (!chapterResponse.ok) {
-                    console.warn(`Skipping chapter: ${chapter}`);
-                    return null;
-                }
-
-                const html = await chapterResponse.text();
-                const chapterSection = document.createElement('section');
-                chapterSection.innerHTML = html;
-                chapterSection.setAttribute('data-chapter', chapter);
-                slidesContainer.appendChild(chapterSection);
-                return chapter;
-            });
-
-            const loadedChapters = await Promise.all(loadPromises);
-            return loadedChapters.filter(Boolean);
+        if (!response.ok) {
+            chapterFile = `${basePath}plain.html`;
         }
+
+        const chapterResponse = await fetch(chapterFile);
+        if (!chapterResponse.ok) {
+            console.warn(`Skipping chapter: ${chapter}`);
+            return null;
+        }
+
+        const html = await chapterResponse.text();
+        const chapterSection = document.createElement('section');
+        chapterSection.innerHTML = html;
+        chapterSection.setAttribute('data-chapter', chapter);
+        slidesContainer.appendChild(chapterSection);
+        return chapter;
+    });
+
+    const loadedChapters = await Promise.all(loadPromises);
+    return loadedChapters.filter(Boolean);
+}
+
 
         // Load additional scripts for chapters
         async function loadAdditionalScripts(loadedChapters) {
